@@ -5,8 +5,8 @@ from sqlalchemy.orm import Session
 
 from app.db.database import get_db
 
-route = APIRouter()
+router = APIRouter()
 
-@route.get("/course/test")
+@router.get("/course/test")
 def test(test: str):
     return test

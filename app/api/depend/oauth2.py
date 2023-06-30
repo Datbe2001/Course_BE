@@ -4,6 +4,7 @@ import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
+from ...crud import crud_user
 from app import crud, model
 from app.core.settings import settings
 from sqlalchemy.orm import Session
@@ -16,7 +17,7 @@ def create_token(data: dict, token_type: str):
     to_encode = data.copy()
 
     if token_type == "access":
-        expire = datetime.utcnow() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRES_IN_DAYS)
+        expire = datetime.utcnow() + timedelta(days=settings.ACCESS_TOKEN_EXPIRES_IN_DAYS)
     else:
         expire = datetime.utcnow() + timedelta(days=settings.REFRESH_TOKEN_EXPIRES_IN_DAYS)
     to_encode.update({"token_type": token_type, "exp": expire})
@@ -53,7 +54,7 @@ def verify_token(credentials: HTTPAuthorizationCredentials, db: Session):
 
     # check user existence
     uid = decoded_token['uid']
-    user = crud.user.get(db=db, entry_id=uid)
+    user = crud_user.get(db=db, entry_id=uid)
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -94,14 +95,14 @@ def get_current_user(
         db: Session = Depends(get_db)
 ):
     user_id = token['uid']
-    user = crud.user.get_user_by_id(db=db, user_id=user_id)
+    user = crud_user.get_user_by_id(db=db, user_id=user_id)
     return user
 
 
 def get_current_active_user(
         current_user: model.User = Depends(get_current_user),
 ) -> model.User:
-    if not crud.user.is_active(current_user):
+    if not crud_user.is_active(current_user):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail=AppStatus.ERROR_INACTIVE_USER.meta)
 
@@ -109,7 +110,7 @@ def get_current_active_user(
 
 
 def user_manager(
-        current_user: model.User = Depends(get_current_active_user)
+        current_user: model.User = Depends(get_current_user)
 ) -> model.User:
     if current_user.system_role not in [UserSystemRole.MANAGER, UserSystemRole.ADMIN]:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
@@ -119,7 +120,7 @@ def user_manager(
 
 
 def admin(
-        current_user: model.User = Depends(get_current_active_user)
+        current_user: model.User = Depends(get_current_user)
 ) -> model.User:
     if not current_user.system_role == UserSystemRole.ADMIN:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
