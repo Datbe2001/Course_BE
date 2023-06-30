@@ -5,7 +5,7 @@ import sqlalchemy as sa
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import NullPool
 
-from app.core.setting import settings
+from app.core.settings import settings
 
 
 @lru_cache()
