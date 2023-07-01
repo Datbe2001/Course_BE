@@ -40,5 +40,14 @@ class CRUDCourse(CRUDBase[Course, CourseCreate, CourseUpdate]):
         db.commit()
         db.refresh(current_course)
         return current_course
+    
+    def update_course(self, db: Session, current_course: Dict, course_update: CourseUpdate):
+        result = super().update(db, obj_in=course_update, db_obj=current_course)
+        return result
+    
+    def delete_course(self, db: Session, current_course: Dict):
+        db.delete(current_course)
+        db.commit()
+        return current_course
 
 crud_course = CRUDCourse(Course)

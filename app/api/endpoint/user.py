@@ -24,7 +24,7 @@ async def read_me(user: User = Depends(oauth2.get_current_user),
     return make_response_object(user_response)
 
 
-@router.get("/users")
+@router.get("/user/list")
 async def list_users(skip = 0,
                     limit = 10,
                     user: User = Depends(oauth2.admin),
@@ -89,4 +89,3 @@ async def update_user_role(
 
     user_response = await user_service.update_user_role(user_id=user_id, user_role=user_role)
     return make_response_object(user_response)
-

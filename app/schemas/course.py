@@ -27,7 +27,7 @@ class CourseCreateParams(BaseModel):
 class CourseCreate(CourseBase):
     pass
 
-class CourseUpdate(CourseBase):
+class CourseUpdate(BaseModel):
     name: str
     description: Optional[str] = None
     banner: Optional[str] = None
