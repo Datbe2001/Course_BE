@@ -18,3 +18,7 @@ class UserSystemRole(str, Enum):
     ADMIN = "ADMIN"
     MANAGER = "MANAGER"
     MEMBER = "MEMBER"
+
+class CourseType(str, Enum):
+    FREE = "FREE"
+    PRO = "PRO"

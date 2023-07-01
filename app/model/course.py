@@ -11,6 +11,7 @@ class Course(Base):
     banner = Column(String(255), nullable=True)
     description = Column(String(255), nullable=True)
     course_type = Column(String(255), nullable=False)
+    KEY = Column(String(255), nullable=False)
     created_by = Column(String(255), nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), server_default=text("now()"))
     updated_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"),

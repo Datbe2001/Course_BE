@@ -1,1 +1,2 @@
-from .user import User
+from .user import UserService
+from .course import CourseService
