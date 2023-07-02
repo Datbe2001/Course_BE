@@ -6,8 +6,9 @@ from app.constant.app_status import AppStatus
 from app.core.exceptions import error_exception_handler
 
 from ..model import User
-from ..schemas import CourseType, CourseCreate, CourseUpdate
-from ..crud import crud_course
+from ..schemas import CourseType, CourseCreate, CourseUpdate, UserCourseCreate
+from ..crud import crud_course, crud_user_course
+from ..model.base import CourseRole
 
 class CourseService:
     def __init__(self, db: Session):
@@ -39,6 +40,12 @@ class CourseService:
                                                     KEY=course_create.KEY,
                                                     course_type=course_type,
                                                     created_by=user_id))
+        
+        crud_user_course.create_user_course(db=self.db,
+                                            user_course_create=UserCourseCreate(id=str(uuid.uuid4()),
+                                                                                user_id=user_id,
+                                                                                course_id=current_course.id,
+                                                                                course_role=CourseRole.OWNER))
         
         return current_course
 

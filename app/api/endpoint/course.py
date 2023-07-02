@@ -47,6 +47,7 @@ async def create_course(course_type: CourseType,
     course_response = await course_service.create_course(user_id=user.id,
                                                        course_type=course_type,
                                                        course_create=course_create)
+    db.refresh(course_response)
     return make_response_object(course_response)
 
 
