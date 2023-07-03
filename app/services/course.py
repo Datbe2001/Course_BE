@@ -17,7 +17,7 @@ class CourseService:
     async def get_course_by_id(self, course_id):
         current_course = crud_course.get_course_by_id(db=self.db, course_id=course_id)
         if not current_course:
-            raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_NOT_EXIST)
+            raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_NOT_FOUND)
         
         return current_course
     
@@ -53,7 +53,7 @@ class CourseService:
     async def has_course_permissions(self, user_id: str, course_id: str):
         current_course = crud_course.get_course_by_id(db=self.db, course_id=course_id)
         if not current_course:
-            raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_NOT_EXIST)
+            raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_NOT_FOUND)
         elif current_course.created_by != user_id:
             raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_METHOD_NOT_ALLOWED)
 
@@ -61,7 +61,7 @@ class CourseService:
     async def update_course(self, course_id: str, course_update: CourseUpdate):
         current_course = crud_course.get_course_by_id(db=self.db, course_id=course_id)
         if not current_course:
-            raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_NOT_EXIST)
+            raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_NOT_FOUND)
         
         result = crud_course.update_course(db=self.db, current_course=current_course, course_update=course_update)
         return result
@@ -70,7 +70,7 @@ class CourseService:
     async def delete_course(self, course_id: str):
             current_course = crud_course.get_course_by_id(db=self.db, course_id=course_id)
             if not current_course:
-                raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_NOT_EXIST)
+                raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_NOT_FOUND)
             
             result = crud_course.delete_course(db=self.db, current_course=current_course)
             return result
