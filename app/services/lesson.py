@@ -1,6 +1,7 @@
 import uuid
 from fastapi import HTTPException
 
+from sqlalchemy import Integer, func
 from sqlalchemy.orm import Session
 from app.constant.app_status import AppStatus
 from app.core.exceptions import error_exception_handler
@@ -34,8 +35,17 @@ class LessonService:
         if not current_course:
             raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_NOT_FOUND)
         
+        last_lesson_id = self.db.query(Lesson.id).filter(Lesson.id.like(f"{current_course.KEY}-%")).order_by(
+                                        func.substr(Lesson.id, func.char_length(current_course.KEY)+2).cast(Integer).desc()).first()
+        if last_lesson_id:
+            last_lesson_number = int(last_lesson_id[0].split('-')[1])
+        else:
+            last_lesson_number = 0
+        new_lesson_number = last_lesson_number + 1
+        new_lesson_id = f"{current_course.KEY}-{new_lesson_number}"
+        
         current_lesson = crud_lesson.create_lesson(db=self.db, lesson_create=LessonCreate(
-                                                    id=str(uuid.uuid4()),
+                                                    id=new_lesson_id,
                                                     name=lesson_create.name,
                                                     description=lesson_create.description,
                                                     video_id=lesson_create.video_id,
