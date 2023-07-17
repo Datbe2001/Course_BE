@@ -7,7 +7,7 @@ from app.core.exceptions import error_exception_handler
 
 from ..model import User
 from ..schemas import CourseType, CourseCreate, CourseUpdate, UserCourseCreate
-from ..crud import crud_course, crud_user_course
+from ..crud import crud_course, crud_user_course, crud_user
 from ..model.base import CourseRole
 
 class CourseService:
@@ -54,23 +54,74 @@ class CourseService:
         current_course = crud_course.get_course_by_id(db=self.db, course_id=course_id)
         if not current_course:
             raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_NOT_FOUND)
-        elif current_course.created_by != user_id:
+        user_course = crud_user_course.get_by_course_id_user_id(db=self.db, user_id=user_id, course_id=course_id)
+        if not user_course:
             raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_METHOD_NOT_ALLOWED)
+        
+        return user_course
 
 
-    async def update_course(self, course_id: str, course_update: CourseUpdate):
+    async def update_course(self, course_id: str, course_update: CourseUpdate, user_course: CourseRole):
         current_course = crud_course.get_course_by_id(db=self.db, course_id=course_id)
         if not current_course:
             raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_NOT_FOUND)
-        
+        if user_course != CourseRole.OWNER:
+                raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_METHOD_NOT_ALLOWED)
+
         result = crud_course.update_course(db=self.db, current_course=current_course, course_update=course_update)
         return result
 
 
-    async def delete_course(self, course_id: str):
+    async def invite_participant_to_course(self, course_id: str,
+                                            course_role: CourseRole,
+                                            user_id: str,
+                                            user_course_role: CourseRole):
+
+        current_course = crud_course.get_course_by_id(db=self.db, course_id=course_id)
+        if not current_course:
+            raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_NOT_FOUND)
+        
+        current_user = crud_user.get_user_by_id(db=self.db, user_id=user_id)
+        if not current_user:
+            raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_USER_NOT_FOUND)
+        
+        if user_course_role == CourseRole.OWNER:
+            if course_role != CourseRole.MEMBER:
+                raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_METHOD_NOT_ALLOWED)
+        else:
+            raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_METHOD_NOT_ALLOWED)
+        
+        current_user_course = crud_user_course.get_by_course_id_user_id(db=self.db, user_id=user_id, course_id=course_id)
+        if current_user_course:
+            raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_ALREADY_JOINED_TO_COURSE)
+        else:
+            user_course = crud_user_course.invite_or_join_to_user_course(db=self.db, user_id=user_id,
+                                                              course_id=course_id,
+                                                              course_role=course_role)
+            return user_course
+        
+
+    async def join_to_course(self, *, user_id: str, course_id: str):
+        current_course = crud_course.get_course_by_id(db=self.db, course_id=course_id)
+        if not current_course:
+            raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_NOT_FOUND)
+        
+        current_user_course = crud_user_course.get_by_course_id_user_id(db=self.db, user_id=user_id, course_id=course_id)
+        if current_user_course:
+            raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_ALREADY_JOINED_TO_COURSE)
+        
+        user_course = crud_user_course.invite_or_join_to_user_course(self.db,  user_id=user_id,
+                                                       course_id=course_id,
+                                                       course_role=CourseRole.MEMBER)
+        return user_course
+
+
+    async def delete_course(self, course_id: str, user_course: CourseRole):
             current_course = crud_course.get_course_by_id(db=self.db, course_id=course_id)
             if not current_course:
                 raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_NOT_FOUND)
+            if user_course != CourseRole.OWNER:
+                raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_METHOD_NOT_ALLOWED)
             
             result = crud_course.delete_course(db=self.db, current_course=current_course)
             return result
