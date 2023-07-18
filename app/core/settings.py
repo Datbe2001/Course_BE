@@ -15,6 +15,10 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str
     JWT_SECRET_KEY: str
 
+    CLOUD_NAME: str
+    API_KEY: str
+    API_SECRET: str
+
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> str:
         return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}/{self.POSTGRES_DB}"
