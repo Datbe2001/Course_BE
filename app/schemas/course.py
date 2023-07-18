@@ -21,13 +21,12 @@ class CourseBase(BaseModel):
 class CourseCreateParams(BaseModel):
     name: str
     description: Optional[str] = None
-    banner: Optional[str] = None
     KEY: str
 
 class CourseCreate(CourseBase):
     pass
 
 class CourseUpdate(BaseModel):
-    name: str
+    name: Optional[str] = None
     description: Optional[str] = None
     banner: Optional[str] = None

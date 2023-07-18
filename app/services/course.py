@@ -1,14 +1,18 @@
 import uuid
-from fastapi import HTTPException
+from fastapi import HTTPException, UploadFile, File
 
 from sqlalchemy.orm import Session
 from app.constant.app_status import AppStatus
 from app.core.exceptions import error_exception_handler
+import cloudinary
+from cloudinary.uploader import upload
+from cloudinary import uploader, CloudinaryVideo
 
 from ..model import User
 from ..schemas import CourseType, CourseCreate, CourseUpdate, UserCourseCreate
 from ..crud import crud_course, crud_user_course, crud_user
 from ..model.base import CourseRole
+from app.core.settings import settings
 
 class CourseService:
     def __init__(self, db: Session):
@@ -27,16 +31,20 @@ class CourseService:
         return result
 
 
-    async def create_course(self, user_id: str, course_type: CourseType, course_create: CourseCreate):
+    async def create_course(self, user_id: str, course_type: CourseType,
+                            course_create: CourseCreate, banner: UploadFile = File(...)):
         course_KEY = crud_course.get_course_by_KEY(db=self.db, KEY=course_create.KEY)
         if course_KEY:
             raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_KEY_CONFLICT)
         
+        banner = cloudinary.uploader.upload(banner.file, folder="banner")
+        banner_url = banner.get("secure_url")
+
         current_course = crud_course.create_course(db=self.db, course_create=CourseCreate(
                                                     id=str(uuid.uuid4()),
                                                     name=course_create.name,
                                                     description=course_create.description,
-                                                    banner=course_create.banner,
+                                                    banner=banner_url,
                                                     KEY=course_create.KEY,
                                                     course_type=course_type,
                                                     created_by=user_id))
@@ -61,12 +69,17 @@ class CourseService:
         return user_course
 
 
-    async def update_course(self, course_id: str, course_update: CourseUpdate, user_course: CourseRole):
+    async def update_course(self, course_id: str, course_update: CourseUpdate,
+                            banner: UploadFile, user_course: CourseRole):
         current_course = crud_course.get_course_by_id(db=self.db, course_id=course_id)
         if not current_course:
             raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_NOT_FOUND)
         if user_course != CourseRole.OWNER:
                 raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_METHOD_NOT_ALLOWED)
+        if banner:
+            uploaded_banner = upload(banner.file)
+            banner_url = uploaded_banner['secure_url']
+            course_update.banner = banner_url
 
         result = crud_course.update_course(db=self.db, current_course=current_course, course_update=course_update)
         return result
