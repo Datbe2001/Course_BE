@@ -8,7 +8,7 @@ from app.core.exceptions import error_exception_handler
 
 from ..model import Lesson
 from ..schemas import LessonCreate, LessonUpdate, LessonCreateParams
-from ..crud import crud_lesson, crud_course
+from ..crud import crud_lesson, crud_course, crud_user_course
 from ..model.base import CourseRole
 
 class LessonService:
@@ -25,15 +25,41 @@ class LessonService:
         return current_lesson
 
 
-    async def list_lesson(self, skip: int, limit: int):
-        result = crud_lesson.list_lesson(db=self.db, skip=skip, limit=limit)
+    async def list_lesson(self, course_id: str, skip: int, limit: int):
+        current_course = crud_course.get_course_by_id(db=self.db, course_id=course_id)
+        if not current_course:
+            raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_NOT_FOUND)
+        
+        result = crud_lesson.list_lesson(db=self.db, course_id=current_course.id, skip=skip, limit=limit)
         return result
+    
+
+    async def has_lesson_permission(self, user_id: str, lesson_id: str):
+        current_lesson = crud_lesson.get_lesson_by_id(db=self.db, lesson_id=lesson_id)
+        if not current_lesson:
+            raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_LESSON_NOT_FOUND)
+        current_user_course = await self.has_course_permission(user_id=user_id, course_id=current_lesson.course_id)
+        return current_user_course
 
 
-    async def create_lesson(self, lesson_create: LessonCreateParams):
+    async def has_course_permission(self, user_id: str, course_id: str):
+        current_course = crud_course.get_course_by_id(db=self.db, course_id=course_id)
+        if not current_course:
+            raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_NOT_FOUND)
+        current_user_course = crud_user_course.get_by_course_id_user_id(db=self.db, user_id=user_id, course_id=course_id)
+        if not current_user_course:
+            raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_NOT_JOINED_TO_COURSE)
+        
+        return current_user_course
+
+
+    async def create_lesson(self, lesson_create: LessonCreateParams, user_course_role: CourseRole):
         current_course = crud_course.get_course_by_id(db=self.db, course_id=lesson_create.course_id)
         if not current_course:
             raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_NOT_FOUND)
+
+        if user_course_role != CourseRole.OWNER:
+                raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_METHOD_NOT_ALLOWED)
         
         last_lesson_id = self.db.query(Lesson.id).filter(Lesson.id.like(f"{current_course.KEY}-%")).order_by(
                                         func.substr(Lesson.id, func.char_length(current_course.KEY)+2).cast(Integer).desc()).first()
@@ -53,18 +79,24 @@ class LessonService:
         return current_lesson
 
 
-    async def update_lesson(self, lesson_id: str, lesson_update: LessonUpdate):
+    async def update_lesson(self, user_course_role: CourseRole, lesson_id: str, lesson_update: LessonUpdate):
         current_lesson = crud_lesson.get_lesson_by_id(db=self.db, lesson_id=lesson_id)
         if not current_lesson:
             raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_LESSON_NOT_FOUND)
         
+        if user_course_role != CourseRole.OWNER:
+                raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_METHOD_NOT_ALLOWED)
+        
         result = crud_lesson.update_lesson(db=self.db, current_lesson=current_lesson, lesson_update=lesson_update)
         return result
 
-    async def delete_lesson(self, lesson_id: str):
+    async def delete_lesson(self, lesson_id: str, user_course_role: CourseRole):
         current_lesson = crud_lesson.get_lesson_by_id(db=self.db, lesson_id=lesson_id)
         if not current_lesson:
             raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_LESSON_NOT_FOUND)
+
+        if user_course_role != CourseRole.OWNER:
+                raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_METHOD_NOT_ALLOWED)
         
         result = crud_lesson.delete_lesson(db=self.db, current_lesson=current_lesson)
         return result

@@ -14,13 +14,15 @@ from ...services import LessonService
 router = APIRouter()
 
 @router.get("/lesson/list")
-async def list_lesson(user: User = Depends(oauth2.get_current_user),
+async def list_lesson(course_id: str,
+                      user: User = Depends(oauth2.get_current_user),
                       db: Session = Depends(get_db),
                       skip=0,
                       limit=10):
     lesson_service = LessonService(db=db)
 
-    lesson_response = await lesson_service.list_lesson(skip=skip, limit=limit)
+    await lesson_service.has_course_permission(user_id=user.id, course_id=course_id)
+    lesson_response = await lesson_service.list_lesson(course_id=course_id, skip=skip, limit=limit)
     return make_response_object(lesson_response)
 
 
@@ -31,6 +33,7 @@ async def get_lesson_by_id(lesson_id: str,
     
     lesson_service = LessonService(db=db)
 
+    await lesson_service.has_lesson_permission(user_id=user.id, lesson_id=lesson_id)
     lesson_response = await lesson_service.get_lesson_by_id(lesson_id=lesson_id)
     return make_response_object(lesson_response)
 
@@ -42,7 +45,9 @@ async def create_lesson(lesson_create: LessonCreateParams,
     
     lesson_service = LessonService(db=db)
 
-    lesson_response = await lesson_service.create_lesson(lesson_create=lesson_create)
+    user_course_role = await lesson_service.has_course_permission(user_id=user.id, course_id=lesson_create.course_id)
+    lesson_response = await lesson_service.create_lesson(lesson_create=lesson_create,
+                                                         user_course_role=user_course_role.course_role)
     db.refresh(lesson_response)
     return make_response_object(lesson_response)
 
@@ -55,7 +60,9 @@ async def update_lesson(lesson_id: str,
     
     lesson_service = LessonService(db=db)
 
-    lesson_response = await lesson_service.update_lesson(lesson_id=lesson_id,
+    user_course_role = await lesson_service.has_lesson_permission(user_id=user.id, lesson_id=lesson_id)
+    lesson_response = await lesson_service.update_lesson(user_course_role=user_course_role.course_role,
+                                                         lesson_id=lesson_id,
                                                          lesson_update=lesson_update)
     return make_response_object(lesson_response)
 
@@ -67,5 +74,6 @@ async def delete_lesson(lesson_id: str,
     
     lesson_service = LessonService(db=db)
 
-    lesson_response = await lesson_service.delete_lesson(lesson_id=lesson_id)
+    user_course_role = await lesson_service.has_lesson_permission(user_id=user.id, lesson_id=lesson_id)
+    lesson_response = await lesson_service.delete_lesson(lesson_id=lesson_id, user_course_role=user_course_role.course_role)
     return make_response_object(lesson_response)

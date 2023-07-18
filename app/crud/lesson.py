@@ -21,8 +21,8 @@ class CRUDLesson(CRUDBase[Lesson, LessonCreate, LessonUpdate]):
 
 
     @staticmethod
-    def list_lesson(db: Session, skip: int, limit: int) -> Optional[Lesson]:
-        db_query = db.query(Lesson)
+    def list_lesson(db: Session, course_id: str, skip: int, limit: int) -> Optional[Lesson]:
+        db_query = db.query(Lesson).filter(Lesson.course_id == course_id)
         total_lesson = db_query.offset(skip).limit(limit).count()
         list_lesson = db_query.all()
 
