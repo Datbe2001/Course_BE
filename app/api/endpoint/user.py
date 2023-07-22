@@ -16,14 +16,6 @@ from ...model.base import UserSystemRole
 
 router = APIRouter()
 
-@router.get("/user/me")
-async def read_me(user: User = Depends(oauth2.get_current_user),
-                db: Session = Depends(get_db)):
-    user_service = UserService(db=db)
-    user_response = await user_service.get_user_by_id(user_id=user.id)
-    return make_response_object(user_response)
-
-
 @router.get("/user/list")
 async def list_users(skip = 0,
                     limit = 10,
@@ -34,7 +26,15 @@ async def list_users(skip = 0,
     return make_response_object(user_response)
 
 
-@router.post("/user/register")
+@router.get("/user/me")
+async def read_me(user: User = Depends(oauth2.get_current_user),
+                db: Session = Depends(get_db)):
+    user_service = UserService(db=db)
+    user_response = await user_service.get_user_by_id(user_id=user.id)
+    return make_response_object(user_response)
+
+
+@router.post("/auth/register")
 async def create_user(create_user: UserCreateParams,
                        db: Session = Depends(get_db)):
     user_service = UserService(db=db)

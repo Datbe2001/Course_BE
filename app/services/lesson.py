@@ -1,10 +1,14 @@
 import uuid
-from fastapi import HTTPException
+from fastapi import HTTPException, UploadFile
 
 from sqlalchemy import Integer, func
 from sqlalchemy.orm import Session
 from app.constant.app_status import AppStatus
 from app.core.exceptions import error_exception_handler
+
+import cloudinary
+from cloudinary.uploader import upload
+from cloudinary import uploader, CloudinaryVideo
 
 from ..model import Lesson
 from ..schemas import LessonCreate, LessonUpdate, LessonCreateParams
@@ -53,13 +57,26 @@ class LessonService:
         return current_user_course
 
 
-    async def create_lesson(self, lesson_create: LessonCreateParams, user_course_role: CourseRole):
+    async def create_lesson(self, lesson_create: LessonCreateParams,
+                            video_id: str, video_url: UploadFile,
+                            user_course_role: CourseRole):
+        if not video_id and not video_url or (video_id and video_url):
+            raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_INVALID_VIDEO_INPUT)
+             
         current_course = crud_course.get_course_by_id(db=self.db, course_id=lesson_create.course_id)
         if not current_course:
             raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_NOT_FOUND)
 
         if user_course_role != CourseRole.OWNER:
                 raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_METHOD_NOT_ALLOWED)
+        
+        if video_url:
+            try:
+                upload_result = cloudinary.uploader.upload(video_url.file, resource_type='video', folder="video")
+                video_url = upload_result['url']
+            except Exception as error:
+                raise error_exception_handler(error=error, app_status=AppStatus.ERROR_BAD_REQUEST)
+                    
         
         last_lesson_id = self.db.query(Lesson.id).filter(Lesson.id.like(f"{current_course.KEY}-%")).order_by(
                                         func.substr(Lesson.id, func.char_length(current_course.KEY)+2).cast(Integer).desc()).first()
@@ -74,7 +91,8 @@ class LessonService:
                                                     id=new_lesson_id,
                                                     name=lesson_create.name,
                                                     description=lesson_create.description,
-                                                    video_id=lesson_create.video_id,
+                                                    video_id=video_id,
+                                                    video_url=video_url,
                                                     course_id=lesson_create.course_id))
         return current_lesson
 

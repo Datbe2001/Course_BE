@@ -16,3 +16,7 @@ class Course(Base):
     created_at = Column(TIMESTAMP(timezone=True), server_default=text("now()"))
     updated_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"),
                         onupdate=func.current_timestamp())
+
+    # user = relationship("User", back_populates="courses")
+    # lessons = relationship("Lesson", back_populates="course", passive_deletes=True)
+    # user_courses  = relationship("UserCourse", back_populates="course", passive_deletes=True)

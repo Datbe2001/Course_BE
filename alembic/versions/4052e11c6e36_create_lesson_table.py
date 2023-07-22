@@ -22,6 +22,7 @@ def upgrade() -> None:
                     sa.Column('name', sa.String(length=255), nullable=False),
                     sa.Column('description', sa.String(length=255), nullable=True),
                     sa.Column('video_id', sa.String(length=255), nullable=True),
+                    sa.Column('video_url', sa.String(length=255), nullable=True),
                     sa.Column('course_id', sa.String(length=255), nullable=False),
                     sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
                     sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),

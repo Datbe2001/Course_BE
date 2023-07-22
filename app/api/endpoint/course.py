@@ -34,6 +34,17 @@ async def list_course(user: User = Depends(oauth2.get_current_user),
     return make_response_object(course_response)
 
 
+@router.get("/course/me")
+async def get_course_by_me(skip = 0, limit = 10,
+                           user: User = Depends(oauth2.user_manager),
+                           db: Session = Depends(get_db)):
+    
+    course_service = CourseService(db=db)
+
+    course_response = await course_service.get_course_by_me(user_id=user.id, skip=skip, limit=limit)
+    return make_response_object(course_response)
+
+
 @router.get("/course/{course_id}")
 async def get_course_by_id(course_id: str, 
                             user: User = Depends(oauth2.get_current_user),
@@ -63,6 +74,39 @@ async def create_course(course_type: CourseType,
                                                         course_create=course_create,
                                                         banner=banner)
     db.refresh(course_response)
+    return make_response_object(course_response)
+
+
+
+@router.post("/course/{course_id}/invite")
+async def invite_participant_to_course(
+        course_id: str,
+        course_role: CourseRole,
+        user_id: str,
+        user: User = Depends(oauth2.user_manager),
+        db: Session = Depends(get_db)):
+
+    course_service = CourseService(db=db)
+
+    # authorization
+    user_course = await course_service.has_course_permissions(user_id=user.id, course_id=course_id)
+    course_response = await course_service.invite_participant_to_course(course_id=course_id,
+                                                                        course_role=course_role,
+                                                                        user_id=user_id,
+                                                                        user_course_role=user_course.course_role)
+
+    return make_response_object(course_response)
+
+
+@router.post("/course/{course_id}/join")
+async def join_to_course(
+        course_id: str,
+        user: User = Depends(oauth2.get_current_user),
+        db: Session = Depends(get_db)):
+
+    course_service = CourseService(db=db)
+    course_response = await course_service.join_to_course(user_id=user.id, course_id=course_id)
+
     return make_response_object(course_response)
 
 
@@ -98,36 +142,4 @@ async def delete_course(course_id: str,
     user_course = await course_service.has_course_permissions(user_id=user.id, course_id=course_id)
 
     course_response = await course_service.delete_course(course_id=course_id, user_course=user_course.course_role)
-    return make_response_object(course_response)
-
-
-@router.post("/course/{course_id}/invite")
-async def invite_participant_to_course(
-        course_id: str,
-        course_role: CourseRole,
-        user_id: str,
-        user: User = Depends(oauth2.user_manager),
-        db: Session = Depends(get_db)):
-
-    course_service = CourseService(db=db)
-
-    # authorization
-    user_course = await course_service.has_course_permissions(user_id=user.id, course_id=course_id)
-    course_response = await course_service.invite_participant_to_course(course_id=course_id,
-                                                                        course_role=course_role,
-                                                                        user_id=user_id,
-                                                                        user_course_role=user_course.course_role)
-
-    return make_response_object(course_response)
-
-
-@router.post("/course/{course_id}/join")
-async def join_to_course(
-        course_id: str,
-        user: User = Depends(oauth2.get_current_user),
-        db: Session = Depends(get_db)):
-
-    course_service = CourseService(db=db)
-    course_response = await course_service.join_to_course(user_id=user.id, course_id=course_id)
-
     return make_response_object(course_response)

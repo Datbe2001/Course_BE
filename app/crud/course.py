@@ -18,6 +18,15 @@ class CRUDCourse(CRUDBase[Course, CourseCreate, CourseUpdate]):
         return current_course
     
     @staticmethod
+    def get_course_by_me(db: Session, user_id: str, skip: int, limit: int) -> Optional[Course]:
+        db_query = db.query(Course).filter(Course.created_by == user_id)
+        total_course = db_query.count()
+        list_course = db_query.offset(skip).limit(limit).all()
+
+        result = dict(total_course=total_course, list_course=list_course)
+        return result
+    
+    @staticmethod
     def get_course_by_KEY(db: Session, KEY: str) -> Optional[Course]:
         current_course = db.query(Course).filter(Course.KEY == KEY).first()
         return current_course
@@ -28,10 +37,7 @@ class CRUDCourse(CRUDBase[Course, CourseCreate, CourseUpdate]):
         total_course = db_query.offset(skip).limit(limit).count()
         list_course = db_query.all()
 
-        result = {
-            "total_course": total_course,
-            "list_course": list_course
-        }
+        result = dict(total_course=total_course, list_course=list_course)
         return result
     
     def create_course(self, db: Session, course_create: Dict):

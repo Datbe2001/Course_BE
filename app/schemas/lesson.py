@@ -11,12 +11,15 @@ from pydantic import Field
 class LessonBase(BaseModel):
     name: str
     description: Optional[str] = None
-    video_id: str
     course_id: str
+    video_id: Optional[str] = None
+    video_url: Optional[str] = None
 
 
-class LessonCreateParams(LessonBase):
-    pass
+class LessonCreateParams(BaseModel):
+    name: str
+    description: Optional[str] = None
+    course_id: str
 
 
 class LessonCreate(LessonBase):
@@ -26,7 +29,6 @@ class LessonCreate(LessonBase):
 class LessonUpdate(BaseModel):
     name: str
     description: Optional[str] = None
-    video_id: str
 
 
 class Lesson(LessonBase):

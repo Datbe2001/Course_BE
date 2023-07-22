@@ -18,8 +18,15 @@ class CourseService:
     def __init__(self, db: Session):
         self.db = db
 
-    async def get_course_by_id(self, course_id):
+    async def get_course_by_id(self, course_id: str):
         current_course = crud_course.get_course_by_id(db=self.db, course_id=course_id)
+        if not current_course:
+            raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_NOT_FOUND)
+        
+        return current_course
+    
+    async def get_course_by_me(self, user_id: str, skip: int, limit: int):
+        current_course = crud_course.get_course_by_me(db=self.db, user_id=user_id, skip=skip, limit=limit)
         if not current_course:
             raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COURSE_NOT_FOUND)
         
