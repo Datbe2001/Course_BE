@@ -10,6 +10,9 @@ class Settings(BaseSettings):
     POSTGRES_HOST: str
     DEBUG: Optional[bool] = False
 
+    COURSE_EMAIl: str
+    COURSE_EMAIL_PASSWORD: str
+
     ACCESS_TOKEN_EXPIRES_IN_DAYS: int
     REFRESH_TOKEN_EXPIRES_IN_DAYS: int
     JWT_ALGORITHM: str
