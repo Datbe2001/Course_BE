@@ -1,11 +1,15 @@
 import logging
 import uuid
 
+from ..constant.app_status import AppStatus
 from typing import Any, Dict, Optional, Union
 from sqlalchemy.orm import Session
 from .base import CRUDBase
 from ..model import User
+from app.utils import hash_lib
 
+
+from app.utils.hash_lib import hash_verify_code
 from app.schemas.user import UserCreate, UserUpdate, UserResponse
 
 
@@ -27,11 +31,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     def list_users(db: Session, skip: int, limit: int) -> Optional[User]:
         total_users = db.query(User).count()
         list_users = db.query(User).offset(skip).limit(limit).all()
-
-        result = {
-            "total_users": total_users,
-            "list_users": list_users
-        }
+        result = dict(total_users=total_users, list_users=list_users)
         return result
 
     def create_user(self, db: Session, create_user: UserCreate):
@@ -41,16 +41,37 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         db.refresh(current_user)
         return current_user
     
+    def update_verification_code(self, db: Session, current_user: dict, verify_code: str):
+        current_user.verify_code = hash_verify_code(str(verify_code))
+        db.commit()
+        db.refresh(current_user)
+        return current_user
+    
     def update_user(self, db: Session, current_user: str, update_user: UserUpdate):
         result = super().update(db, obj_in=update_user, db_obj=current_user)
         return result
     
     def update_user_role(self, db: Session, current_user: str, user_role: str):
-        logger.info("CRUDUser: update_user_role called.")
+        logger.info("CRUD_user: update_user_role called")
         current_user.system_role = user_role
         db.commit()
         db.refresh(current_user)
-        logger.info("CRUDUser: update_user_role called successfully.")
+        logger.info("CRUD_user: update_user_role called successfully")
+        return current_user
+    
+    def verify_code(self, db: Session, current_user: dict, new_password: str):
+        current_user.hashed_password = hash_lib.hash_verify_code(str(new_password))
+        current_user.is_active = True
+        db.commit()
+        db.refresh(current_user)
+        return current_user
+    
+    def change_password(self, db: Session, current_user: dict, new_password: str):
+        logger.info("CRUD_user: change_password called.")
+        current_user.hashed_password = new_password
+        db.commit()
+        db.refresh(current_user)
+        logger.info("CRUD_user: change_password called successfully.")
         return current_user
     
 
