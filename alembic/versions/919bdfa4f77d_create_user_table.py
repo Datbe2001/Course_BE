@@ -28,6 +28,7 @@ def upgrade() -> None:
                     sa.Column('is_active', sa.Boolean(), server_default=sa.text('false'), nullable=False),
                     sa.Column('hashed_password', sa.String(), nullable=True),
                     sa.Column('verify_code', sa.String(), nullable=True),
+                    sa.Column('qr_code', sa.String(length=255), nullable=True),
                     sa.Column('system_role', sa.Enum('ADMIN', 'MANAGER', 'MEMBER', name='system_role_enum'),
                               nullable=False),
                     sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
