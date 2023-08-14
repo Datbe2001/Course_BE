@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 
 from app.model.base import Base
 
+
 class Lesson(Base):
     __tablename__ = "lesson"
 

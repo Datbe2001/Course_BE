@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 
 from app.model.base import Base, UserSystemRole
 
+
 class User(Base):
     __tablename__ = "user"
 
@@ -22,6 +23,4 @@ class User(Base):
     updated_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"),
                         onupdate=func.current_timestamp())
 
-
     comments = relationship("Comment", back_populates="user")
-    

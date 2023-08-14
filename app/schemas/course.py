@@ -18,13 +18,16 @@ class CourseBase(BaseModel):
     KEY: str
     created_by: str
 
+
 class CourseCreateParams(BaseModel):
     name: str
     description: Optional[str] = None
     KEY: str
 
+
 class CourseCreate(CourseBase):
     pass
+
 
 class CourseUpdate(BaseModel):
     name: Optional[str] = None

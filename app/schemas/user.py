@@ -22,9 +22,11 @@ class UserBase(BaseModel):
     class Config:
         orm_mode = True
 
+
 class UserCreateParams(BaseModel):
     email: str
     username: str
+
 
 class UserUpdateParams(BaseModel):
     username: Optional[str] = None
@@ -33,10 +35,12 @@ class UserUpdateParams(BaseModel):
     birthday: Optional[date] = None
     phone: Optional[str] = None
 
+
 class UserCreate(BaseModel):
     id: str
     email: str
     username: str
+
 
 class UserUpdate(BaseModel):
     id: Optional[str] = None
@@ -47,14 +51,17 @@ class UserUpdate(BaseModel):
     phone: Optional[str] = None
     is_activate: Optional[bool] = True
 
+
 class LoginUser(BaseModel):
     email: str
     password: str
+
 
 class ChangePassword(BaseModel):
     old_password: str
     new_password: str
     new_password_confirm: str
+
 
 class UserInfo(BaseModel):
     id: str
@@ -65,8 +72,8 @@ class UserInfo(BaseModel):
         allow_population_by_field_name = True
         orm_mode = True
 
-class UserResponse(UserBase):
 
+class UserResponse(UserBase):
     class Config:
         orm_mode = True
         json_encoders = {
