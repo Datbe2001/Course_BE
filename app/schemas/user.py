@@ -56,10 +56,13 @@ class ChangePassword(BaseModel):
     new_password: str
     new_password_confirm: str
 
-class User(UserBase):
+class UserInfo(BaseModel):
     id: str
+    avatar: Optional[str] = None
+    username: Optional[str] = None
 
     class Config:
+        allow_population_by_field_name = True
         orm_mode = True
 
 class UserResponse(UserBase):
