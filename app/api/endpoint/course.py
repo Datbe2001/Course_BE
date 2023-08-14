@@ -1,3 +1,4 @@
+import uuid
 from fastapi import APIRouter
 from fastapi import Depends, UploadFile, File
 from sqlalchemy.orm import Session
@@ -10,9 +11,8 @@ from app.core.settings import settings
 
 from ...schemas.course import CourseCreateParams, CourseUpdate
 from ...model.base import CourseType, CourseRole
-from ...model import User
+from ...model import User, Course
 from ...services import CourseService
-
 
 router = APIRouter()
 
@@ -20,14 +20,15 @@ cloudinary.config(
     cloud_name=settings.CLOUD_NAME,
     api_key=settings.API_KEY,
     api_secret=settings.API_SECRET
-    )
+)
+
 
 @router.get("/course/list")
-async def list_course(user: User = Depends(oauth2.get_current_user),
-                      db: Session = Depends(get_db),
-                      skip=0,
-                      limit=10):
-    
+async def list_course(
+        user: User = Depends(oauth2.get_current_user),
+        db: Session = Depends(get_db),
+        skip=0,
+        limit=10):
     course_service = CourseService(db=db)
 
     course_response = await course_service.list_course(skip=skip, limit=limit)
@@ -35,10 +36,9 @@ async def list_course(user: User = Depends(oauth2.get_current_user),
 
 
 @router.get("/course/me")
-async def get_course_by_me(skip = 0, limit = 10,
+async def get_course_by_me(skip=0, limit=10,
                            user: User = Depends(oauth2.user_manager),
                            db: Session = Depends(get_db)):
-    
     course_service = CourseService(db=db)
 
     course_response = await course_service.get_course_by_me(user_id=user.id, skip=skip, limit=limit)
@@ -46,10 +46,9 @@ async def get_course_by_me(skip = 0, limit = 10,
 
 
 @router.get("/course/{course_id}")
-async def get_course_by_id(course_id: str, 
-                            user: User = Depends(oauth2.get_current_user),
-                            db: Session = Depends(get_db)):
-    
+async def get_course_by_id(course_id: str,
+                           user: User = Depends(oauth2.get_current_user),
+                           db: Session = Depends(get_db)):
     course_service = CourseService(db=db)
 
     course_response = await course_service.get_course_by_id(course_id=course_id)
@@ -64,18 +63,16 @@ async def create_course(course_type: CourseType,
                         banner: UploadFile = File(...),
                         user: User = Depends(oauth2.user_manager),
                         db: Session = Depends(get_db)):
-    
     course_service = CourseService(db=db)
 
     course_create = CourseCreateParams(name=name, KEY=KEY, description=description)
 
-    course_response = await course_service.create_course(user_id=user.id, 
-                                                        course_type=course_type,
-                                                        course_create=course_create,
-                                                        banner=banner)
+    course_response = await course_service.create_course(user_id=user.id,
+                                                         course_type=course_type,
+                                                         course_create=course_create,
+                                                         banner=banner)
     db.refresh(course_response)
     return make_response_object(course_response)
-
 
 
 @router.post("/course/{course_id}/invite")
@@ -85,7 +82,6 @@ async def invite_participant_to_course(
         user_id: str,
         user: User = Depends(oauth2.user_manager),
         db: Session = Depends(get_db)):
-
     course_service = CourseService(db=db)
 
     # authorization
@@ -103,7 +99,6 @@ async def join_to_course(
         course_id: str,
         user: User = Depends(oauth2.get_current_user),
         db: Session = Depends(get_db)):
-
     course_service = CourseService(db=db)
     course_response = await course_service.join_to_course(user_id=user.id, course_id=course_id)
 
@@ -112,12 +107,11 @@ async def join_to_course(
 
 @router.put("/course/update/{course_id}")
 async def update_course(course_id: str,
-                        name: str=None,
-                        description: str=None,
+                        name: str = None,
+                        description: str = None,
                         banner: UploadFile = File(None),
                         user: User = Depends(oauth2.user_manager),
                         db: Session = Depends(get_db)):
-    
     course_service = CourseService(db=db)
 
     # authorization
@@ -135,7 +129,6 @@ async def update_course(course_id: str,
 async def delete_course(course_id: str,
                         user: User = Depends(oauth2.user_manager),
                         db: Session = Depends(get_db)):
-    
     course_service = CourseService(db=db)
 
     # authorization
@@ -143,3 +136,36 @@ async def delete_course(course_id: str,
 
     course_response = await course_service.delete_course(course_id=course_id, user_course=user_course.course_role)
     return make_response_object(course_response)
+
+
+# test update
+@router.put("/course/test/{course_id}")
+async def delete_course(course_id: str,
+                        name: str,
+                        description: str,
+                        db: Session = Depends(get_db)):
+    course_service = CourseService(db=db)
+    current_course = await course_service.get_course_by_id(course_id=course_id)
+    current_course.name = name
+    current_course.description = description
+    result = db.add(current_course)
+    db.commit()
+
+    # authorization
+
+    return make_response_object(result)
+
+
+# test create
+@router.post("/course/test/create")
+async def create_course(course_type: CourseType,
+                        name: str,
+                        KEY: str,
+                        user_id: str,
+                        description: str = None,
+                        db: Session = Depends(get_db)):
+    course_create = Course(id=str(uuid.uuid4()), course_type=course_type, name=name, KEY=KEY, description=description,
+                           created_by=user_id)
+    db.add(course_create)
+    db.commit()
+    return course_create

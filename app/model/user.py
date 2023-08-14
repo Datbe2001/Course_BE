@@ -22,5 +22,6 @@ class User(Base):
     updated_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"),
                         onupdate=func.current_timestamp())
 
-    # courses = relationship("Course", back_populates="user", passive_deletes=True)
+
+    comments = relationship("Comment", back_populates="user")
     
