@@ -56,6 +56,7 @@ class ChangePassword(BaseModel):
     new_password: str
     new_password_confirm: str
 
+
 class UserInfo(BaseModel):
     id: str
     avatar: Optional[str] = None
