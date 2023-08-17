@@ -1,11 +1,7 @@
-from enum import Enum
-
-from datetime import date
 from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel
-from pydantic import Field
 from app.schemas.user import UserInfo
 
 

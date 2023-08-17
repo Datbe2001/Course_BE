@@ -1,8 +1,8 @@
 import logging
-import uuid
 
-from typing import Any, Dict, Optional
+
 from sqlalchemy.orm import Session, joinedload
+from sqlalchemy import desc
 from .base import CRUDBase
 from ..model import Comment
 
@@ -28,7 +28,7 @@ class CRUDComment(CRUDBase[Comment, CommentCreate, CommentUpdate]):
     def list_comment(db: Session, lesson_id: str, skip: int, limit: int):
         db_query = db.query(Comment).filter(Comment.lesson_id == lesson_id).options(joinedload(Comment.user))
         total_comment = db_query.count()
-        list_comment = db_query.offset(skip).limit(limit).all()
+        list_comment = db_query.order_by(desc(Comment.created_at)).offset(skip).limit(limit).all()
         return total_comment, list_comment
 
 
