@@ -58,9 +58,6 @@ class CommentService:
         return result
 
     async def delete_comment(self, comment_id: str):
-        current_comment = crud_comment.get_comment_by_id(db=self.db, comment_id=comment_id)
-        if current_comment is None:
-            raise error_exception_handler(error=Exception(), app_status=AppStatus.ERROR_COMMENT_NOT_FOUND)
         result = crud_comment.remove(db=self.db, entry_id=comment_id)
         return result
 

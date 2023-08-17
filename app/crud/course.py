@@ -3,6 +3,7 @@ import uuid
 
 from typing import Any, Dict, Optional
 from sqlalchemy.orm import Session, joinedload
+from sqlalchemy import desc
 from .base import CRUDBase
 from ..model import Course
 
@@ -35,7 +36,7 @@ class CRUDCourse(CRUDBase[Course, CourseCreate, CourseUpdate]):
     def list_course(db: Session, skip: int, limit: int):
         db_query = db.query(Course).options(joinedload(Course.user))
         total_course = db_query.count()
-        list_course = db_query.offset(skip).limit(limit).all()
+        list_course = db_query.order_by(desc(Course.created_at)).offset(skip).limit(limit).all()
         return total_course, list_course
 
     def create_course(self, db: Session, course_create: Dict):

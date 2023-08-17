@@ -2,6 +2,7 @@ import logging
 
 from typing import Dict, Optional
 from sqlalchemy.orm import Session
+from sqlalchemy import desc
 from .base import CRUDBase
 from ..model import Lesson
 
@@ -22,7 +23,7 @@ class CRUDLesson(CRUDBase[Lesson, LessonCreate, LessonUpdate]):
     def list_lesson(db: Session, course_id: str, skip: int, limit: int):
         db_query = db.query(Lesson).filter(Lesson.course_id == course_id)
         total_lesson = db_query.count()
-        list_lesson = db_query.offset(skip).limit(limit).all()
+        list_lesson = db_query.order_by(desc(Lesson.created_at)).offset(skip).limit(limit).all()
 
         result = dict(total_lesson=total_lesson, list_lesson=list_lesson)
         return result
