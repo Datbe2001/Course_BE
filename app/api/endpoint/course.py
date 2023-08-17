@@ -5,7 +5,6 @@ from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.api.depend import oauth2
 from app.utils.response import make_response_object
-import cloudinary
 import cloudinary.uploader
 from app.core.settings import settings
 

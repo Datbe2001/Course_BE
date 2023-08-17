@@ -16,3 +16,4 @@ class Comment(Base):
     
     # Relationship
     user = relationship("User", back_populates="comments")
+    lesson = relationship("Lesson", back_populates="comments")

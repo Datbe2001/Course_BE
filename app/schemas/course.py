@@ -7,6 +7,7 @@ from typing import Optional
 from pydantic import BaseModel, constr
 from pydantic import Field
 from ..model.base import CourseType
+from app.schemas.user import UserInfo
 
 
 class CourseBase(BaseModel):
@@ -33,3 +34,13 @@ class CourseUpdate(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
     banner: Optional[str] = None
+
+
+class CourseResponse(CourseBase):
+    created_at: Optional[datetime] = None
+
+    class Config:
+        orm_mode = True
+        arbitrary_types_allowed = True
+
+    user: Optional[UserInfo] = None

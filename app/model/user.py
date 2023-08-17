@@ -24,3 +24,5 @@ class User(Base):
                         onupdate=func.current_timestamp())
 
     comments = relationship("Comment", back_populates="user")
+    courses = relationship("Course", back_populates="user")
+    user_courses = relationship("UserCourse", back_populates="user")

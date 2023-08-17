@@ -14,7 +14,7 @@ def make_error_response(app_status=AppStatus.ERROR_INTERNAL_SERVER_ERROR, detail
     )
 
 
-def make_response_object(data, meta={}):
+def make_response_object(data: object, meta: object = {}) -> object:
     return {
         "data": data,
         "meta": meta

@@ -6,9 +6,9 @@ from app.api.depend import oauth2
 from app.utils.response import make_response_object
 
 from ...schemas import CommentCreateParams, CommentUpdateParams
-from ...model.base import CourseType
+
 from ...model import User
-from ...services import CommentService
+from ...services import CommentService, LessonService
 
 router = APIRouter()
 
@@ -20,7 +20,8 @@ async def list_comment(lesson_id: str,
                        skip=0,
                        limit=10):
     comment_service = CommentService(db=db)
-
+    lesson_service = LessonService(db=db)
+    await lesson_service.has_lesson_permission(user_id=user.id, lesson_id=lesson_id)
     comment_response = await comment_service.list_comment(lesson_id=lesson_id, skip=skip, limit=limit)
     return make_response_object(comment_response)
 
@@ -30,7 +31,9 @@ async def create_comment(comment: CommentCreateParams,
                          db: Session = Depends(get_db),
                          user: User = Depends(oauth2.get_current_user)):
     comment_service = CommentService(db=db)
-    comment_response = await comment_service.create_comnent_to_post(user_id=user.id, comment=comment)
+    lesson_service = LessonService(db=db)
+    await lesson_service.has_lesson_permission(user_id=user.id, lesson_id=comment.lesson_id)
+    comment_response = await comment_service.create_comment_to_post(user_id=user.id, comment=comment)
     return make_response_object(comment_response)
 
 
@@ -52,4 +55,13 @@ async def delete_comment(comment_id: str,
     comment_service = CommentService(db=db)
     await comment_service.has_comment_permission(user_id=user.id, comment_id=comment_id)
     comment_response = await comment_service.delete_comment(comment_id=comment_id)
+    return make_response_object(comment_response)
+
+
+@router.get("/comments/test")
+async def test(comment_id: str,
+               db: Session = Depends(get_db),
+               user: User = Depends(oauth2.get_current_user)):
+    comment_service = CommentService(db=db)
+    comment_response = await comment_service.test(user_id=user.id, comment_id=comment_id)
     return make_response_object(comment_response)

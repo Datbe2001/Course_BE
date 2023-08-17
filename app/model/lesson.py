@@ -1,4 +1,4 @@
-from sqlalchemy import (Boolean, Column, Date, String, text, func, TIMESTAMP)
+from sqlalchemy import (Boolean, Column, Date, String, text, func, ForeignKey, TIMESTAMP)
 from sqlalchemy.orm import relationship
 
 from app.model.base import Base
@@ -12,10 +12,11 @@ class Lesson(Base):
     description = Column(String(255), nullable=True)
     video_id = Column(String(255), nullable=False)
     video_url = Column(String(255), nullable=False)
-    course_id = Column(String(255), nullable=False)
+    course_id = Column(String(255), ForeignKey("course.id", ondelete="CASCADE"), nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), server_default=text("now()"))
     updated_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"),
                         onupdate=func.current_timestamp())
 
-    # course = relationship("Course", back_populates="lessons")
-    # comment = relationship("Comment", back_populates="lessons")
+    # Relationship
+    comments = relationship("Comment", back_populates="lesson")
+    course = relationship("Course", back_populates="lessons")
