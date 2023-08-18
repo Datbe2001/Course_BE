@@ -27,3 +27,4 @@ class User(Base):
     courses = relationship("Course", back_populates="user")
     user_courses = relationship("UserCourse", back_populates="user")
     reply_comments = relationship("ReplyComment", back_populates="user")
+    notifications = relationship("Notification", back_populates="user")

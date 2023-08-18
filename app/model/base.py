@@ -14,15 +14,25 @@ class Base:
     def __tablename__(cls) -> str:
         return cls.__name__.lower()
 
+
 class UserSystemRole(str, Enum):
     ADMIN = "ADMIN"
     MANAGER = "MANAGER"
     MEMBER = "MEMBER"
 
+
 class CourseType(str, Enum):
     FREE = "FREE"
     PRO = "PRO"
 
+
 class CourseRole(str, Enum):
     OWNER = "OWNER"
     MEMBER = "MEMBER"
+
+
+class NotificationType(str, Enum):
+    SYSTEM_NOTIFICATION = "SYSTEM_NOTIFICATION"
+    COURSE_NOTIFICATION = "COURSE_NOTIFICATION"
+    POST_NOTIFICATION = "POST_NOTIFICATION"
+    COMMENT_NOTIFICATION = "COMMENT_NOTIFICATION"
