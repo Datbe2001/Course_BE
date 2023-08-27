@@ -17,4 +17,4 @@ class Comment(Base):
     # Relationship
     user = relationship("User", back_populates="comments")
     lesson = relationship("Lesson", back_populates="comments")
-    reply_comments = relationship("ReplyComment", back_populates="comment")
+    reply_comments = relationship("ReplyComment", back_populates="comment", passive_deletes=True)

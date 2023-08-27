@@ -18,5 +18,5 @@ class Lesson(Base):
                         onupdate=func.current_timestamp())
 
     # Relationship
-    comments = relationship("Comment", back_populates="lesson")
+    comments = relationship("Comment", back_populates="lesson", passive_deletes=True)
     course = relationship("Course", back_populates="lessons")

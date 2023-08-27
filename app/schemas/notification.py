@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 
 class NotificationBase(BaseModel):
+    id: str
     data: dict
     user_id: Optional[str] = None
     notification_type: str

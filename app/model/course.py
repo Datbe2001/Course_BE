@@ -20,5 +20,5 @@ class Course(Base):
 
     # Relationship
     user = relationship("User", back_populates="courses")
-    lessons = relationship("Lesson", back_populates="course")
-    user_course = relationship("UserCourse", back_populates="courses")
+    lessons = relationship("Lesson", back_populates="course", passive_deletes=True)
+    user_course = relationship("UserCourse", back_populates="courses", passive_deletes=True)

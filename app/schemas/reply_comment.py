@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import Optional
+from app.schemas.user import UserInfo
 
 from pydantic import BaseModel
 
@@ -32,3 +33,14 @@ class ReplyComment(ReplyCommentBase):
 
     class Config:
         orm_mode = True
+
+
+class ReplyCommentResponse(ReplyCommentBase):
+    id: Optional[str] = None
+    created_at: Optional[datetime] = None
+
+    class Config:
+        orm_mode = True
+        arbitrary_types_allowed = True
+
+    user: Optional[UserInfo] = None

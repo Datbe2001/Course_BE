@@ -1,7 +1,9 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel
+
+from app.schemas.reply_comment import ReplyCommentResponse
 from app.schemas.user import UserInfo
 
 
@@ -37,3 +39,4 @@ class CommentResponse(CommentBase):
         arbitrary_types_allowed = True
 
     user: Optional[UserInfo] = None
+    reply_comments: List[ReplyCommentResponse] = None

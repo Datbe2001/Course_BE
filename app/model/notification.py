@@ -8,8 +8,8 @@ class Notification(Base):
     __tablename__ = "notification"
 
     id = Column(String(255), primary_key=True)
-    data = Column(JSON(), nullable=False),
-    unread = Column(Boolean, default=True),
+    data = Column(JSON(), nullable=False)
+    unread = Column(Boolean, default=True)
     notification_type = Column(String(255), nullable=False)
     user_id = Column(String(255), ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), server_default=text("now()"))

@@ -7,11 +7,12 @@ from app.api.depend import oauth2
 from app.utils.response import make_response_object
 import cloudinary.uploader
 from app.core.settings import settings
+from ...constant.template import NotificationTemplate
 
 from ...schemas.course import CourseCreateParams, CourseUpdate
-from ...model.base import CourseType, CourseRole
+from ...model.base import CourseType, CourseRole, NotificationType
 from ...model import User, Course
-from ...services import CourseService
+from ...services import CourseService, NotificationService
 
 router = APIRouter()
 
@@ -24,7 +25,7 @@ cloudinary.config(
 
 @router.get("/course/list")
 async def list_course(
-        user: User = Depends(oauth2.get_current_user),
+        # user: User = Depends(oauth2.get_current_user),
         db: Session = Depends(get_db),
         skip=0,
         limit=10):
@@ -63,6 +64,7 @@ async def create_course(course_type: CourseType,
                         user: User = Depends(oauth2.user_manager),
                         db: Session = Depends(get_db)):
     course_service = CourseService(db=db)
+    notification_service = NotificationService(db=db)
 
     course_create = CourseCreateParams(name=name, KEY=KEY, description=description)
 
@@ -70,6 +72,12 @@ async def create_course(course_type: CourseType,
                                                          course_type=course_type,
                                                          course_create=course_create,
                                                          banner=banner)
+    message_template = NotificationTemplate.CRUD_COURSE_NOTIFICATION_MSG
+    await notification_service.notify_entity_status(entity=course_response,
+                                                    notification_type=NotificationType.COURSE_NOTIFICATION,
+                                                    message_template=message_template, action="created",
+                                                    current_user=user)
+
     db.refresh(course_response)
     return make_response_object(course_response)
 
@@ -112,6 +120,7 @@ async def update_course(course_id: str,
                         user: User = Depends(oauth2.user_manager),
                         db: Session = Depends(get_db)):
     course_service = CourseService(db=db)
+    notification_service = NotificationService(db=db)
 
     # authorization
     user_course = await course_service.has_course_permissions(user_id=user.id, course_id=course_id)
@@ -121,6 +130,12 @@ async def update_course(course_id: str,
                                                          course_update=course_update,
                                                          banner=banner,
                                                          user_course=user_course.course_role)
+    message_template = NotificationTemplate.CRUD_COURSE_NOTIFICATION_MSG
+    await notification_service.notify_entity_status(entity=course_response,
+                                                    notification_type=NotificationType.COURSE_NOTIFICATION,
+                                                    message_template=message_template, action="updated",
+                                                    current_user=user)
+    db.refresh(course_response)
     return make_response_object(course_response)
 
 
@@ -129,11 +144,17 @@ async def delete_course(course_id: str,
                         user: User = Depends(oauth2.user_manager),
                         db: Session = Depends(get_db)):
     course_service = CourseService(db=db)
+    notification_service = NotificationService(db=db)
 
     # authorization
     user_course = await course_service.has_course_permissions(user_id=user.id, course_id=course_id)
 
     course_response = await course_service.delete_course(course_id=course_id, user_course=user_course.course_role)
+    message_template = NotificationTemplate.CRUD_COURSE_NOTIFICATION_MSG
+    await notification_service.notify_entity_status(entity=course_response,
+                                                    notification_type=NotificationType.COURSE_NOTIFICATION,
+                                                    message_template=message_template, action="deleted",
+                                                    current_user=user)
     return make_response_object(course_response)
 
 

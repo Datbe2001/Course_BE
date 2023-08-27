@@ -1,13 +1,11 @@
 import logging
 
-
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import desc
 from .base import CRUDBase
-from ..model import Comment
+from ..model import Comment, ReplyComment
 
 from ..schemas import CommentCreate, CommentUpdate
-
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +24,9 @@ class CRUDComment(CRUDBase[Comment, CommentCreate, CommentUpdate]):
 
     @staticmethod
     def list_comment(db: Session, lesson_id: str, skip: int, limit: int):
-        db_query = db.query(Comment).filter(Comment.lesson_id == lesson_id).options(joinedload(Comment.user))
+        db_query = db.query(Comment).filter(Comment.lesson_id == lesson_id).options(
+            joinedload(Comment.user),
+            joinedload(Comment.reply_comments).joinedload(ReplyComment.user))
         total_comment = db_query.count()
         list_comment = db_query.order_by(desc(Comment.created_at)).offset(skip).limit(limit).all()
         return total_comment, list_comment
