@@ -7,7 +7,7 @@ from app.core.exceptions import error_exception_handler
 from app.core.pusher.pusher_client import PusherClient
 from app.core.settings import settings
 
-from ..crud import crud_notification
+from ..crud import crud_notification, crud_user
 from ..model import User
 from ..schemas import NotificationCreate
 from ..model.base import NotificationType
@@ -61,6 +61,41 @@ class NotificationService:
         request_data = NotificationCreate(id=str(uuid.uuid4()), data=data_push, user_id=current_user.id,
                                           notification_type=notification_type)
         await self.create_notification(request_data=request_data)
+
+    async def multi_notify_entity_status(self, entity, notification_type, message_template, action, current_user=None):
+        if action in ['created', 'updated', 'deleted']:
+            message = message_template(course_type=notification_type[:-13].lower(),
+                                       course_name=entity.name,
+                                       action=action,
+                                       user_name=current_user.username)
+            data_push = {
+                "message": message,
+                "params": {
+                    notification_type[:-13].lower() + '_id': f'{entity.id}',
+                    notification_type[:-13].lower() + '_name': f'{entity.name}',
+                    "notification_type": notification_type
+                },
+                "data": {
+                }
+            }
+        else:
+            data_push = []
+
+        list_user = crud_user.list_users(db=self.db)
+
+        list_request_data = []
+        for user in list_user["list_users"]:
+            request_data = NotificationCreate(id=str(uuid.uuid4()), data=data_push, user_id=user.id,
+                                              notification_type=notification_type)
+            list_request_data.append(request_data)
+
+        await self.create_multi_notification(list_request_data=list_request_data, data_push=data_push)
+
+    async def create_multi_notification(self, list_request_data: list, data_push: dict):
+        client = PusherClient()
+        notification_db = crud_notification.create_multi_notification(db=self.db, list_request_data=list_request_data)
+        client.push_notification(settings.ALL_CHANNEL, f"[{settings.ALL_CHANNEL}]", data_push=data_push)
+        return notification_db
 
     async def create_notification(self, request_data: NotificationCreate):
         client = PusherClient()

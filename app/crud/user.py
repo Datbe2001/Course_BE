@@ -25,9 +25,12 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         return current_user
 
     @staticmethod
-    def list_users(db: Session, skip: int, limit: int):
+    def list_users(db: Session, skip: int = None, limit: int = None):
         total_users = db.query(User).count()
-        list_users = db.query(User).offset(skip).limit(limit).all()
+        if skip and limit is None:
+            list_users = db.query(User).all()
+        else:
+            list_users = db.query(User).offset(skip).limit(limit).all()
         result = dict(total_users=total_users, list_users=list_users)
         return result
 

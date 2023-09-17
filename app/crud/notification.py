@@ -54,5 +54,11 @@ class CRUDNotification(CRUDBase[Notification, NotificationCreate, NotificationUp
         db.refresh(current_notification)
         return current_notification
 
+    def create_multi_notification(self, db: Session, list_request_data: list):
+        notification_objects = db.bulk_insert_mappings(Notification, [item.dict() for item in list_request_data])
+        db.commit()
+        return notification_objects
+
+
 
 crud_notification = CRUDNotification(Notification)

@@ -73,10 +73,10 @@ async def create_course(course_type: CourseType,
                                                          course_create=course_create,
                                                          banner=banner)
     message_template = NotificationTemplate.CRUD_COURSE_NOTIFICATION_MSG
-    await notification_service.notify_entity_status(entity=course_response,
-                                                    notification_type=NotificationType.COURSE_NOTIFICATION,
-                                                    message_template=message_template, action="created",
-                                                    current_user=user)
+    await notification_service.multi_notify_entity_status(entity=course_response,
+                                                          notification_type=NotificationType.COURSE_NOTIFICATION,
+                                                          message_template=message_template, action="created",
+                                                          current_user=user)
 
     db.refresh(course_response)
     return make_response_object(course_response)
