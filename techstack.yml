@@ -1,0 +1,273 @@
+repo_name: Datbe2001/Course_BE
+report_id: 74aedc6f1cc8a8153615f577f0abee58
+version: 0.1
+repo_type: Public
+timestamp: '2024-07-17T14:59:12+00:00'
+requested_by: Datbe2001
+provider: github
+branch: dev
+detected_tools_count: 19
+tools:
+- name: Mako
+  description: Template library written in Python
+  website_url: https://github.com/zzzeek/mako
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Templating Languages & Extensions
+  image_url: https://img.stackshare.io/service/3583/default_43e3ee00dcc48a40f6fcba33551e4f5a99a10537.png
+  detection_source_url: https://github.com/Datbe2001/Course_BE
+  detection_source: Repo Metadata
+- name: Python
+  description: A clear and powerful object-oriented programming language, comparable
+    to Perl, Ruby, Scheme, or Java.
+  website_url: https://www.python.org
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Languages
+  image_url: https://img.stackshare.io/service/993/pUBY5pVj.png
+  detection_source_url: https://github.com/Datbe2001/Course_BE
+  detection_source: Repo Metadata
+- name: FastAPI
+  description: A high performance, easy to learn, fast to code, ready for production
+    web framework
+  website_url: https://fastapi.tiangolo.com/
+  version: 0.61.2
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Microframeworks (Backend)
+  image_url: https://img.stackshare.io/service/25014/default_f6ff39141b468e832d1bc59fc98a060df604d44d.png
+  detection_source_url: https://github.com/Datbe2001/Course_BE/blob/dev/poetry.lock
+  detection_source: pyproject.toml
+  last_updated_by: Đạt Bê
+  last_updated_on: 2023-06-30 01:54:09.000000000 Z
+- name: Git
+  description: Fast, scalable, distributed revision control system
+  website_url: http://git-scm.com/
+  open_source: true
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Version Control System
+  image_url: https://img.stackshare.io/service/1046/git.png
+  detection_source_url: https://github.com/Datbe2001/Course_BE
+  detection_source: Repo Metadata
+- name: PyPI
+  description: A repository of software for the Python programming language
+  website_url: https://pypi.org/
+  open_source: false
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Hosted Package Repository
+  image_url: https://img.stackshare.io/service/12572/-RIWgodF_400x400.jpg
+  detection_source_url: https://github.com/Datbe2001/Course_BE/blob/dev/pyproject.toml
+  detection_source: pyproject.toml
+  last_updated_by: Đạt Bê
+  last_updated_on: 2023-06-30 01:54:09.000000000 Z
+- name: pycryptodome
+  description: Cryptographic library for Python
+  package_url: https://pypi.org/project/pycryptodome
+  version: 3.18.0
+  license: BSD-3-Clause,Unlicense,Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19900/default_4f4fb10b6f169603a907dcb35a5a356d784e3bd3.png
+  detection_source_url: https://github.com/Datbe2001/Course_BE/blob/dev/poetry.lock
+  detection_source: pyproject.toml
+  last_updated_by: Đạt Bê
+  last_updated_on: 2023-06-30 01:54:09.000000000 Z
+  vulnerabilities:
+  - name: PyCryptodome and pycryptodomex side-channel leakage for OAEP decryption
+    cve_id: CVE-2023-52323
+    cve_url: https://github.com/advisories/GHSA-j225-cvw7-qrx7
+    detected_date: Jan 6
+    severity: moderate
+    first_patched: 3.19.1
+- name: PyJWT
+  description: JSON Web Token implementation in Python
+  package_url: https://pypi.org/project/PyJWT
+  version: 1.7.1
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19883/default_3863c7bb51d307217c188e059f67ca417c51efe3.png
+  detection_source_url: https://github.com/Datbe2001/Course_BE/blob/dev/pyproject.toml
+  detection_source: pyproject.toml
+  last_updated_by: Đạt Bê
+  last_updated_on: 2023-06-30 01:54:09.000000000 Z
+- name: aiofiles
+  description: File support for asyncio
+  package_url: https://pypi.org/project/aiofiles
+  version: 23.1.0
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/20183/default_3d320a0aa731f16ceb0e7b6999ca7f7cd784aee2.png
+  detection_source_url: https://github.com/Datbe2001/Course_BE/blob/dev/poetry.lock
+  detection_source: pyproject.toml
+  last_updated_by: Đạt Bê
+  last_updated_on: 2023-06-30 01:54:09.000000000 Z
+- name: alembic
+  description: A database migration tool for SQLAlchemy
+  package_url: https://pypi.org/project/alembic
+  version: 1.11.1
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19961/default_61e35171bd9c0e5c5b88b2e4221ca242576ad8c0.png
+  detection_source_url: https://github.com/Datbe2001/Course_BE/blob/dev/poetry.lock
+  detection_source: pyproject.toml
+  last_updated_by: Đạt Bê
+  last_updated_on: 2023-06-30 01:54:09.000000000 Z
+- name: bcrypt
+  description: Modern password hashing for your software and your servers
+  package_url: https://pypi.org/project/bcrypt
+  version: 4.0.1
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/20031/default_242158225818ea25f0ab9031a46e17f8ff8246cb.png
+  detection_source_url: https://github.com/Datbe2001/Course_BE/blob/dev/poetry.lock
+  detection_source: pyproject.toml
+  last_updated_by: Đạt Bê
+  last_updated_on: 2023-06-30 01:54:09.000000000 Z
+- name: passlib
+  description: Comprehensive password hashing framework supporting over 30 schemes
+  package_url: https://pypi.org/project/passlib
+  version: 1.7.4
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19992/default_aa5b3e77340c2bb80cd8e6a59cd82909abcdcd63.png
+  detection_source_url: https://github.com/Datbe2001/Course_BE/blob/dev/poetry.lock
+  detection_source: pyproject.toml
+  last_updated_by: Đạt Bê
+  last_updated_on: 2023-06-30 01:54:09.000000000 Z
+- name: psycopg2-binary
+  description: Psycopg2 - Python-PostgreSQL Database Adapter
+  package_url: https://pypi.org/project/psycopg2-binary
+  version: 2.9.6
+  license: BSD-3-Clause-Attribution
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/pypi/image.png
+  detection_source_url: https://github.com/Datbe2001/Course_BE/blob/dev/poetry.lock
+  detection_source: pyproject.toml
+  last_updated_by: Đạt Bê
+  last_updated_on: 2023-06-30 01:54:09.000000000 Z
+- name: pytest
+  description: 'Pytest: simple powerful testing with Python'
+  package_url: https://pypi.org/project/pytest
+  version: 5.4.3
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19843/default_4604ff5dcb7f4d9c7b3833591c2142493951b19c.png
+  detection_source_url: https://github.com/Datbe2001/Course_BE/blob/dev/poetry.lock
+  detection_source: pyproject.toml
+  last_updated_by: Đạt Bê
+  last_updated_on: 2023-06-30 01:54:09.000000000 Z
+- name: python-dotenv
+  description: Add .env support to your django/flask apps in development and deployments
+  package_url: https://pypi.org/project/python-dotenv
+  version: 0.19.2
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/20095/default_3141eabecdd8efa55de73a33c43f2ac0d5bbf954.png
+  detection_source_url: https://github.com/Datbe2001/Course_BE/blob/dev/poetry.lock
+  detection_source: pyproject.toml
+  last_updated_by: Đạt Bê
+  last_updated_on: 2023-06-30 01:54:09.000000000 Z
+- name: pytz
+  description: World timezone definitions, modern and historical
+  package_url: https://pypi.org/project/pytz
+  version: 2022.7.1
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19841/default_bb711fa267b2329ed689711a5adb7d9e74610b20.png
+  detection_source_url: https://github.com/Datbe2001/Course_BE/blob/dev/poetry.lock
+  detection_source: pyproject.toml
+  last_updated_by: Đạt Bê
+  last_updated_on: 2023-06-30 01:54:09.000000000 Z
+- name: schedule
+  description: Job scheduling for humans
+  package_url: https://pypi.org/project/schedule
+  version: 1.2.0
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/20213/default_91afeaad6f5d17a2b513346f3f744a53cbd8a9ad.png
+  detection_source_url: https://github.com/Datbe2001/Course_BE/blob/dev/poetry.lock
+  detection_source: pyproject.toml
+  last_updated_by: Đạt Bê
+  last_updated_on: 2023-06-30 01:54:09.000000000 Z
+- name: tldextract
+  description: Accurately separate the TLD from the registered domain and subdomains
+    of a URL, using the Public Suffix List
+  package_url: https://pypi.org/project/tldextract
+  version: 3.4.4
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/20144/default_6c1e0b996cf8d609b9385da5f7856330bcaff137.png
+  detection_source_url: https://github.com/Datbe2001/Course_BE/blob/dev/poetry.lock
+  detection_source: pyproject.toml
+  last_updated_by: Đạt Bê
+  last_updated_on: 2023-06-30 01:54:09.000000000 Z
+- name: uvicorn
+  description: The lightning-fast ASGI server
+  package_url: https://pypi.org/project/uvicorn
+  version: 0.12.3
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/20431/default_f824837db22536768ec317b67275fa384fad7d47.png
+  detection_source_url: https://github.com/Datbe2001/Course_BE/blob/dev/poetry.lock
+  detection_source: pyproject.toml
+  last_updated_by: Đạt Bê
+  last_updated_on: 2023-06-30 01:54:09.000000000 Z
+- name: web3
+  description: Web3.py
+  package_url: https://pypi.org/project/web3
+  version: 5.31.4
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/20162/default_4ac30e385d247a1f87c5fe3f3f00001d9c4df723.png
+  detection_source_url: https://github.com/Datbe2001/Course_BE/blob/dev/poetry.lock
+  detection_source: pyproject.toml
+  last_updated_by: Đạt Bê
+  last_updated_on: 2023-06-30 01:54:09.000000000 Z
